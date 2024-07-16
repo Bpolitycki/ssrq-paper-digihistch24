@@ -1,82 +1,121 @@
 ---
-submission_id: 499
-title: Digital History Switzerland 2024 submission title
+submission_id: 427
+title: On a solid ground. Building software for a 120-year-old research project applying modern engineering practices
 author:
-  - name: Petra Huber
-    orcid: 0000-0002-0760-5497
-    email: petra.huber@university.ch
+  - name: Christian Sonder
+    orcid: 0009-0009-5702-7902
+    email: christian.sonder@unisg.ch
     affiliations:
-      - University 1
-  - name: Michel Meier
-    orcid: 0000-0002-7859-8394
-    email: michel.meier@university.edu
+      - University of St. Gallen
+  - name: Bastian Politycki
+    orcid: 0000-0002-6308-2424
+    email: bastian.politycki@unisg.ch
     affiliations:
-      - University 1
-      - University 2
+      - University of St. Gallen
 keywords:
-  - Keyword 1
-  - Keyword 2
-  - Keyword 3
-  - Keyword 4 (optional)
-  - Keyword 5 (optional)
+  - software engineering
+  - TEI-XML
+  - digital edition
+  - project organization
 abstract: |
-  Short abstract of the submission. This is a placeholder for the abstract of the manuscript. It should be between 150 and 250 words. It must not contain any references or unexplained abbreviations.
+    There is no doubt that the increasing use of digital methods and tools in the humanities opens up an almost infinite number of new possibilities. At the same time, it is becoming more and more clear that this creates new problems for the humanities. Many software solutions are often 'quick hacks' – changes to them are time-consuming, lead to errors, and the sustainability of the solution itself is overall questionable. Digital editing projects – which are mostly based on TEI-XML – face this challenge from the beginning: The 'TEI standard' is rather a loose collection of recommendations, which necessitates the development of a customized schema (a TEI subset) for project-specific data, so that the edition or encoding guidelines can be enforced and their compliance checked. These machine-readable rules must be supplemented by human-readable guidelines which document the fundamental philological decisions and can be used as a manual for the editors.
+
+    The development of such a schema – and the associated workflows – becomes particularly relevant in the context of long-term projects, such as the Collection of Swiss Legal Sources (SLS). Changes to the schema require a continuous conversion of existing datasets. The contribution addresses how practices of modern software development, such as versioning or test-driven development (TDD), can be profitably used for humanities projects. It presents the entire workflow beginning with the creation of a modularized schema for a complex text corpus, which includes texts in German, French, Latin, Italian and Romansh from the 6th to the 18th century, up to the automated verification and publication of the documentation/schema.
 key-points:
-  - Key point 1 (1 sentence)
-  - Key point 2 (1 sentence)
-  - Key point 3 (1 sentence)
+  - Software development is becoming a central aspect in research projects in the (digital) humanities, but those projects often struggle with the implementation of modern engineering practices, which could be helpful to ensure the sustainability of the developed software and speed up the development process itself.
+  - The development of a XML schema for a scholarly edition project is a complex task, which requires a lot of effort and time, but if done right can be a solid foundation for the entire project.
 date: 03-17-2024
 bibliography: references.bib
 ---
 
 ## Introduction
 
-This is a placeholder for the extended abstract of the paper. It should be between 1500 and 2000 words (excluding references).
+### General Problem Description
 
-Check <https://quarto.org/docs/authoring/markdown-basics.html> for more information on how to use markdown, <https://quarto.org/docs/authoring/cross-references.html> for more information on how to use cross-references like this (See @fig-example and @fig-plots), and <https://quarto.org/docs/authoring/footnotes-and-citations.html> for more information on how to use citations like this one [@haber2011, p. 11].
+Nowadays, software is a central component of every research project. Since the establishment of personal computers digital tools are used for a wide range of tasks, from simple text processing (creation) to machine assisted recognition of patterns in damaged papyri. However, projects, in particular those that produce a (digital) scholarly edition, are rarely not only users of existing tools, but also creators of them. Starting from the development / customization of own data formats to the implementation of often complex web applications for presentation. It is not uncommon for the tools developed in this context to be "quick hacks" rather than well-designed software projects. In many cases, this is not a problem at all. The duration of humanities research projects is often manageable (e.g. 3 years). The software developed must first and foremost contribute to achieving the project goals. Adaptation or subsequent use are not usually intended. However, this always becomes a problem if this is precisely the intention or if the corresponding research projects are scheduled for a longer term. If this is the case, then quick solutions often become a problem and are not really FAIR for either internal or external subsequent use. Not least for this reason, this realisation is increasingly becoming the subject of discussion in the digital humanities community under the heading of "research software engineering".^[Manuel Burghardt and Claudia Müller-Birn organised a workshop specifically on this topic at the 50th Annual Conference of the German Informatics Society, see @informatik_software_2019.] The following paper describes the practical experiences from the perspective of a long-term editorial project and explores possibilities for sustainable development practice through the use of modern practices that have long been firmly established outside the academic world.
 
-::: {#fig-example}
+### The Swiss Law Sources
 
-![Figure caption text.](images/placeholder.png)
+The Collection of Swiss Legal Sources (SLS) is a 120 year old research project that publishes Swiss legal texts in German, French, Latin, Italian and Romansh from the 6th to the 18th century. The newly edited texts are published in a printed reference publication and in digital form.^[See @rechtsquellenstiftung_editio_2023 for the web presentation.] By the time of writing ten edition projects are currently underway in three languages with 23 employees spread across Switzerland: In French, edition units are published in the cantons of: Geneva (1 vol.), Vaud (2 vols.) Neuchatel (1 vol.), Fribourg (1 vol.), in German appear: Valais (1 vol.), Lucerne (2 vols.), Schaffhausen (2 vols.), St. Gallen (1 vol.), Graubünden (1 vol.) and in Italian: Ticino (1 vol.). The SSRQ core team consists of the project manager and two members of staff specialising in DH (the authors of this paper), who are responsible for coordinating the projects, processing the data, typesetting and digital publication of the edition units, as well as providing and developing the entire technical infrastructure. Further (sub-)projects are planned. The overall project is scheduled for another ~50 years. In this context, the new and/or further development of software is not only a technical challenge, but above all an organisational one. On the one hand, existing solutions must continue to be operated (continuously), while on the other hand, new requirements must be met on an ongoing basis.
 
+The foundation behind the project recognised the value of the digital over 15 years ago and decided to retro-digitise the volumes published up to that point. Since then, the results of these initial digitisation efforts have been presented in a web application which, as a 'browsing machine', makes the results of the many years of editing work, previously locked between two book covers, available to a broad public. This also signalled the start of the project's transition to a primarily digital editing and working method. Since then, numerous different (web) applications have been created: These include databases that collate information on historical entities (people, places and terms), but also an actual digital application that presents the transcriptions, now encoded in TEI-XML, in both a web and a print view. The ongoing nature of the project was one of the reasons why many of these applications were often 'ad hoc solutions' or proof of concepts that were neither designed for long-term operation nor for integration - i.e. collaboration - with other applications. As a result, a diverse ecosystem of different technologies was used both on the data side and on the processing and presentation side.^[The edited texts themselves are available as PDF (the retro-digitised collection), TeX and FileMaker (transition phase) and TEI-XML (current projects). These are processed by scripts and applications in the programming languages Perl, OCaml, Python, JavaScript and XQuery. Relational as well as graph-based and document-orientated databases are used to store the entity data.]
+
+## Data as a solid ground
+
+In order to deal with a complex situation, as described above, the authors of this paper propose to make use of the following software engineering practices:
+
+- modular software development
+- test driven development
+- semantic versioning
+- semiautomatic documentation
+
+These are also used as basic principles for a fundamental revision of the SLS application landscape. The refactored development of the XML schema used in the project will be used as an example to show how modern, established software development practices can be utilised for digitally driven projects in the humanities.
+
+The foundation of a digit scholarly edition is undoubtedly the transcription and annotation data, usually in XML format (see Fig. 1). As a rule, all further application layers, such as web presentation or print output, are based on these. Over the last two decades, the guidelines of the Text Encoding Initiative (TEI)^[@text_encoding_initiative_guidelines_nodate] have established themselves as the de facto standard for this markup work. However, these guidelines are more of a broad collection of suggestions than a clear set of rules. A circumstance which requires a concrete formulation of the philological concepts in a logical data model - the formation of a so-called TEI subset. Such a subset defines the selection and use of the components and elements provided by the TEI guidelines and is therefore an important part of the editing concept itself. This requirement can be realised with so-called schema languages. Their main use case is the validation of data, i.e. checking whether the XML data corresponds to a certain structure and arrangement. In order to ensure the consistency of the resulting data sets in an ongoing project, it is necessary to continuously support and check the editors during the transcription and annotation process.
+
+The TEI itself offers a Metalanguage / Metaformat called ODD, short for One Document Does it all, for documenting and creating a XML-Schema in a literate programming-fashion.^[The term literate programming usually refers to a programming paradigm introduced by Donald E. Knuth. It describes an approach where programming is done a human readable style at first. See @knuth_literate_1992.] The main idea behind this technique is to use TEI-XML itself to create a description of a schema, which will generated from the ODD file, and (optionally) provide processing instructions for various output media as well.^[The only working implementation of a processor, which can use these instructions, is the processor integrated into the TEIPublisher. See @turska_challenging_2016 for background information.] The ODD-format is used in various contexts, e.g. the German Textarchiv (DTA) uses ODD-files as a source for their TEI-subset *DTABf*.^[See @haaf_enabling_2016.] The development of a schema (in ODD) is typically not understood as software development in the true sense of the word, which is probably one of the reasons why most of the principles mentioned above are not applied (in projects known to us).
+
+![Test and Build Pipeline of a modern schema development workflow](./images/schema-pipeline.png){#fig-schema-pipeline}
+
+In the context of the ongoing refactoring of the SLS application landscape, we developed a test based and modular development workflow (see @fig-schema-pipeline) for the creation of a new schema, based on ODD-files as input.^[The source code of this pipeline as well as the ODD sources are open sourced and can be found in the corresponding GitHub-Repo as well as on Zenodo. See ADD REFs.] At first we splitted the schema into various modules, one for each TEI-element used and various for modules defining datatypes reused in other parts. This principle of atomicity ensure a clear structure and will hopefully provide much better maintainability in the future. Furthermore each definition is paired with a set of tests. These tests are normally defined before the concrete description in the ODD-module is created and describe the expected behaviour of a concrete part of the schema (e.g. "Element a should only be allowed to have the following children and the following attributes...").^[ToDo: Reference to TDD]. A rather simple specification for the element `<pc/>` may look like this:
+
+```xml
+<elementSpec xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" ident="pc" module="analysis" mode="change">
+  <desc xml:lang="en" versionDate="2024-04-30">Contains a punctuation mark, which is processed specially considering linguistic regulations (for example, by adding a space).</desc>
+  <classes mode="replace"/>
+  <content>
+    <rng:data type="string">
+      <rng:param name="pattern">[;:?!]</rng:param>
+    </rng:data>
+  </content>
+  <attList>
+    <attDef ident="force" mode="delete"/>
+    <attDef ident="unit" mode="delete"/>
+    <attDef ident="pre" mode="delete"/>
+  </attList>
+</elementSpec>
+````
+
+With a corresponding unit test, which a bunch of cases:
+
+```python
+@pytest.mark.parametrize(
+    "name, markup, result",
+    [
+        (
+            "valid-pc",
+            "<pc>;</pc>",
+            True,
+        ),
+        (
+            "invalid-pc-with-wrong-char",
+            "<pc>-</pc>",
+            False,
+        ),
+        (
+            "invalid-pc-with-attribute",
+            "<pc unit='c'>;</pc>",
+            False,
+        ),
+    ],
+)
+def test_pc(
+    test_element_with_rng: RNG_test_function,
+    name: str,
+    markup: str,
+    result: bool,
+):
+    test_element_with_rng("pc", name, markup, result, False)
+```
+
+Each of the three tests above consists of the following components: a short description / a title for the test, the markup for the test case itself and the expected result (valid / not valid). If each specification is coupled with one or more tests, it is guaranteed that individual changes to the schema will not compromise the overall functionality. On the one hand, such test cases are abstract enough to enable representative testing of the software components to be developed, but at the same time concrete enough to make them readable for employees specialising in philology. Any communication hurdles between philological conception and concrete (logical) implementation are thus gradually removed.
+
+
+## A brief outlook
+
+...
+
+## References
+
+::: {#refs}
 :::
-
-## Section 1
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.
-
-## Quarto Usage
-
-For advanced users, we recommend exploring features as **Code Blocks**: Use triple backticks (```) to create code blocks. Specify the language for syntax highlighting (e.g., ```python`). Quarto lets you run code and embed its output directly into your document. See <https://quarto.org/docs/computations/inline-code.html> for guidance.
-
-```{python}
-#| output: false
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Create some simple synthetic historical data
-np.random.seed(0)
-years = pd.date_range('1900-01-01', periods=120, freq='Y')
-values = np.random.normal(loc=0, scale=1, size=120).cumsum()
-
-data = pd.DataFrame({
-    'Year': years.year,
-    'Value': values
-})
-
-# Save the data to a CSV file
-data.to_csv('data/sample_data.csv', index=False)
-```
-
-```{python}
-#| label: fig-plots
-# Plotting the data
-plt.figure(figsize=(10, 6))
-plt.plot(data['Year'], data['Value'], marker='o')
-plt.title('Synthetic Historical Data')
-plt.xlabel('Year')
-plt.ylabel('Value')
-plt.grid(True)
-plt.show()
-```
